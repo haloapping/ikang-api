@@ -1,4 +1,4 @@
-import { Fish } from "./types";
+import { type Fish } from "./types/fish";
 
 export const fishes: Fish[] = [
   {

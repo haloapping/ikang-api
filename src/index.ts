@@ -3,7 +3,7 @@ import { randomUUIDv7 } from "bun";
 import { Hono } from "hono";
 import { logger } from "hono/logger";
 import { fishes } from "./data";
-import { Fish, FishSchema } from "./types";
+import { type Fish, FishSchema } from "./types/fish";
 
 const app = new Hono();
 app.use(logger());
