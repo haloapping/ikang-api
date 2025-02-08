@@ -2,7 +2,8 @@
   "name": "ikang-api",
   "scripts": {
     "dev": "bun run --hot src/index.ts",
-    "start": "bun run src/index.ts"
+    "start": "bun run src/index.ts",
+    "format": "bunx prettier --write ."
   },
   "dependencies": {
     "@hono/zod-validator": "^0.4.2",
