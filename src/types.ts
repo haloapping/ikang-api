@@ -14,6 +14,8 @@ const FishSchema = z.object({
   reproduction: z.string().min(1),
   predators: z.array(z.string()),
   behavior: z.string().min(1),
+  createdAt: z.date().optional(),
+  updatedAt: z.union([z.date(), z.null()]).optional(),
 });
 
 type Fish = z.infer<typeof FishSchema>;

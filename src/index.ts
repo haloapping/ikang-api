@@ -60,6 +60,8 @@ app.post("/fishes", zValidator("json", FishSchema), async (c) => {
     reproduction: fishJSON.reproduction,
     predators: fishJSON.predators,
     behavior: fishJSON.behavior,
+    createdAt: new Date(),
+    updatedAt: null,
   };
   fishes.push(newFish);
 
@@ -88,6 +90,8 @@ app.put("/fishes/:id", async (c) => {
     reproduction: fishJSON.reproduction,
     predators: fishJSON.predators,
     behavior: fishJSON.behavior,
+    createdAt: fishJSON.createdAt,
+    updatedAt: new Date(),
   };
 
   for (let i = 0; i < fishes.length; i++) {
@@ -121,6 +125,8 @@ app.patch("/fishes/:id", async (c) => {
     reproduction: fishJSON.reproduction,
     predators: fishJSON.predators,
     behavior: fishJSON.behavior,
+    createdAt: fishJSON.createdAt,
+    updatedAt: new Date(),
   };
 
   for (let i = 0; i < fishes.length; i++) {

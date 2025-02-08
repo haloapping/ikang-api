@@ -15,6 +15,8 @@ export const fishes: Fish[] = [
     reproduction: "Egg-laying",
     predators: ["Larger fish", "Eels"],
     behavior: "Lives in symbiosis with sea anemones",
+    createdAt: new Date(),
+    updatedAt: null,
   },
   {
     id: "6f9619ff-8b86-d011-b42d-00cf4fc964ff",
@@ -30,5 +32,7 @@ export const fishes: Fish[] = [
     reproduction: "Ovoviviparous (live birth from eggs inside mother)",
     predators: ["Humans (fishing)", "Orcas"],
     behavior: "Solitary, apex predator",
+    createdAt: new Date(),
+    updatedAt: null,
   },
 ];
