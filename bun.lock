@@ -1,8 +1,7 @@
 {
-  "lockfileVersion": 1,
+  "lockfileVersion": 0,
   "workspaces": {
     "": {
-      "name": "ikang-api",
       "dependencies": {
         "@hono/zod-validator": "^0.4.2",
         "hono": "^4.6.20",
