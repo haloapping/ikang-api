@@ -1,24 +1,15 @@
 import { Hono } from "hono";
 import { logger } from "hono/logger";
-import {
-  addNewFishHandler,
-  deleteFishHandler,
-  getAllFishesHandler,
-  getByIdFishHandler,
-  patchFishHandler,
-  putFishHandler,
-  searchFishHandler,
-} from "./handlers/fish";
+import { fishRoutes } from "./routes/fish";
 
 const app = new Hono();
 
 app.use(logger());
-app.get("/fishes/search", ...searchFishHandler);
-app.get("/fishes", ...getAllFishesHandler);
-app.get("/fishes/:id", ...getByIdFishHandler);
-app.post("/fishes", ...addNewFishHandler);
-app.put("/fishes/:id", ...putFishHandler);
-app.patch("/fishes/:id", ...patchFishHandler);
-app.delete("fishes/:id", ...deleteFishHandler);
+
+app.get("/", (c) => {
+  return c.json({ message: "Hi 🐟️" });
+});
+
+app.route("/fishes", fishRoutes);
 
 export default app;
