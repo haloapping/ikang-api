@@ -27,7 +27,7 @@ fishRoutes.get("/search", (c) => {
       fish.status?.toLowerCase().includes(keyword) ||
       fish.reproduction?.toLowerCase().includes(keyword) ||
       fish.predators?.toString().toLowerCase().includes(keyword) ||
-      fish.behavior?.toLowerCase().includes(keyword)
+      fish.behavior?.toLowerCase().includes(keyword),
   );
 
   return c.json({ count: foundFishes.length, data: foundFishes }, 200);
@@ -89,7 +89,11 @@ fishRoutes.patch("/:id", async (c) => {
   }
 
   const updatedFishJSON: Fish = await c.req.json();
-  fishes[idxFish] = { ...fishes[idxFish], ...updatedFishJSON, updatedAt: new Date() };
+  fishes[idxFish] = {
+    ...fishes[idxFish],
+    ...updatedFishJSON,
+    updatedAt: new Date(),
+  };
 
   return c.json({ message: "Fish is updated", data: fishes[idxFish] }, 200);
 });
