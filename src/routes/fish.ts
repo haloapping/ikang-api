@@ -56,7 +56,7 @@ fishRoutes.post("/", zValidator("json", FishSchema), async (c) => {
   return c.json({ message: "Fish added", data: newFish }, 201);
 });
 
-fishRoutes.put("/:id", async (c) => {
+fishRoutes.put("/:id", zValidator("json", FishSchema), async (c) => {
   const id = c.req.param("id");
   const idxFish = fishes.findIndex((fish) => fish.id === id);
   const updatedFishJSON: Fish = await c.req.json();
@@ -68,7 +68,13 @@ fishRoutes.put("/:id", async (c) => {
       updatedAt: null,
     });
 
-    return c.json({ message: "Fish not found, added fish" }, 200);
+    return c.json(
+      {
+        message: "Fish not found, added fish",
+        data: fishes[fishes.length - 1],
+      },
+      200,
+    );
   }
 
   fishes[idxFish] = {
@@ -81,11 +87,11 @@ fishRoutes.put("/:id", async (c) => {
   return c.json({ message: "Fish updated", data: fishes[idxFish] }, 200);
 });
 
-fishRoutes.patch("/:id", async (c) => {
+fishRoutes.patch("/:id", zValidator("json", FishSchema), async (c) => {
   const id = c.req.param("id");
   const idxFish = fishes.findIndex((fish) => fish.id === id);
   if (idxFish === -1) {
-    return c.json({ error: "Fish not found" }, 404);
+    return c.json({ message: "Fish not found" }, 404);
   }
 
   const updatedFishJSON: Fish = await c.req.json();
@@ -103,7 +109,7 @@ fishRoutes.delete("/:id", (c) => {
   const idxFish = fishes.findIndex((fish) => fish.id === id);
 
   if (idxFish === -1) {
-    return c.json({ error: "Fish not found" }, 404);
+    return c.json({ message: "Fish not found" }, 404);
   }
 
   fishes.splice(idxFish, 1);
