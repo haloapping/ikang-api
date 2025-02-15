@@ -178,7 +178,7 @@ fishRoutes.patch("/:id", zValidator("json", FishSchema), async (c) => {
     return c.json({ message: "Fish not found" }, 404);
   }
 
-  let query = `UPDATE fishes SET updated_at=CURRENT_TIMESTAMP, `;
+  let query = `UPDATE fishes SET `;
   let values: any[] = [];
   let count: number = 1;
 
@@ -189,7 +189,9 @@ fishRoutes.patch("/:id", zValidator("json", FishSchema), async (c) => {
     count++;
   }
 
-  query = query.slice(0, -2) + ` WHERE id=$${count} RETURNING *;`;
+  query =
+    query.slice(0, -2) +
+    `, updated_at=CURRENT_TIMESTAMP WHERE id=$${count} RETURNING *;`;
   values.push(id);
 
   console.log(query);
