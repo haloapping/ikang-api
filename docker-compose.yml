@@ -1,17 +1,17 @@
 services:
   backend:
-    image: ikang-backend # Remember to change the image name
+    image: ikang-backend
     build:
       context: .
     ports:
-      - "3000:3000"
+      - "${APP_PORT}:${APP_PORT}"
     depends_on:
       - database
   database:
     image: postgres:alpine
     ports:
-      - "5432:5432"
+      - "${DB_PORT}:${DB_PORT}"
     environment:
-      POSTGRES_USER: example_user
-      POSTGRES_PASSWORD: example_password
-      POSTGRES_DB: example_database
+      POSTGRES_USER: ${DB_USER}
+      POSTGRES_PASSWORD: ${DB_PASSWORD}
+      POSTGRES_DB: ${DB_NAME}
