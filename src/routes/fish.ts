@@ -7,26 +7,26 @@ import { type Fish, FishSchema } from "../types/fish";
 export const fishRoutes = new Hono();
 
 fishRoutes.get("/", async (c) => {
-  const res = await pool.query(`SELECT * FROM fishes`);
+  const result = await pool.query(`SELECT * FROM fishes`);
 
-  return c.json({ count: res.rowCount, data: res.rows });
+  return c.json({ count: result.rowCount, data: result.rows });
 });
 
 fishRoutes.get("/search", async (c) => {
   const q = c.req.query("q") || "";
   const keyword = q.toLowerCase();
-  const res = await pool.query(
+  const result = await pool.query(
     `SELECT * FROM fishes
      WHERE name ILIKE $1 OR
-         scientific_name ILIKE $2 OR
-         size ILIKE $3 OR
-         diet ILIKE $4 OR
-         lifespan ILIKE $5 OR
-         status ILIKE $6 OR
-         color ILIKE $7 OR
-         water_type ILIKE $8 OR
-         reproduction ILIKE $9 OR
-         behavior ILIKE $10;`,
+           scientific_name ILIKE $2 OR
+           size ILIKE $3 OR
+           diet ILIKE $4 OR
+           lifespan ILIKE $5 OR
+           status ILIKE $6 OR
+           color ILIKE $7 OR
+           water_type ILIKE $8 OR
+           reproduction ILIKE $9 OR
+           behavior ILIKE $10;`,
     [
       `%${keyword}%`,
       `%${keyword}%`,
@@ -41,27 +41,20 @@ fishRoutes.get("/search", async (c) => {
     ],
   );
 
-  if (res.rowCount === 0) {
-    return c.json({ count: res.rowCount, data: null }, 200);
-  }
-
-  return c.json({ count: res.rowCount, data: res.rows }, 200);
+  return c.json({ count: result.rowCount, data: result.rows }, 200);
 });
 
 fishRoutes.get("/:id", async (c) => {
   const id = c.req.param("id");
-  const res = await pool.query("SELECT * FROM fishes WHERE id=$1", [id]);
-  if (res.rowCount === 0) {
-    return c.json({ message: "Fish not found", data: null }, 404);
-  }
+  const result = await pool.query("SELECT * FROM fishes WHERE id=$1;", [id]);
 
-  return c.json({ message: "Fish found", data: res.rows[0] });
+  return c.json({ count: result.rowCount, data: result.rows[0] });
 });
 
 fishRoutes.post("/", zValidator("json", FishSchema), async (c) => {
   console.log(Bun.env.DB_PASSWORD);
   const fishJSON: Fish = await c.req.json();
-  const res = await pool.query(
+  const result = await pool.query(
     `INSERT INTO fishes(id, name, scientific_name, habitat, size, diet, lifespan, status, color, water_type, reproduction, behavior)
      VALUES($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12)
      RETURNING *;`,
@@ -81,15 +74,15 @@ fishRoutes.post("/", zValidator("json", FishSchema), async (c) => {
     ],
   );
 
-  return c.json({ message: "Fish added", data: res.rows[0] }, 201);
+  return c.json({ message: "Fish added", data: result.rows[0] }, 201);
 });
 
 fishRoutes.put("/:id", zValidator("json", FishSchema), async (c) => {
   const id = c.req.param("id");
-  const fishById = await pool.query(`SELECT id FROM fishes WHERE id=$1`, [id]);
+  const result = await pool.query(`SELECT id FROM fishes WHERE id=$1;`, [id]);
 
   const updatedFishJSON: Fish = await c.req.json();
-  if (fishById.rowCount === 0) {
+  if (result.rowCount === 0) {
     const newFish = {
       id: randomUUIDv7(),
       ...updatedFishJSON,
@@ -132,7 +125,7 @@ fishRoutes.put("/:id", zValidator("json", FishSchema), async (c) => {
     updatedAt: new Date(),
   };
 
-  const updateFish = await pool.query(
+  const updatedResult = await pool.query(
     `UPDATE fishes
      SET
         name=$1,
@@ -162,19 +155,19 @@ fishRoutes.put("/:id", zValidator("json", FishSchema), async (c) => {
       updatedFishJSON.waterType,
       updatedFishJSON.reproduction,
       updatedFishJSON.behavior,
-      fishById.rows[0][12],
+      result.rows[0][12],
       new Date(),
       id,
     ],
   );
 
-  return c.json({ message: "Fish updated", data: updateFish.rows[0] }, 200);
+  return c.json({ message: "Fish updated", data: updatedResult.rows[0] }, 200);
 });
 
 fishRoutes.patch("/:id", zValidator("json", FishSchema), async (c) => {
   const id = c.req.param("id");
-  const fishData = await pool.query("SELECT id FROM fishes WHERE id=$1", [id]);
-  if (fishData.rowCount === 0) {
+  const result = await pool.query("SELECT id FROM fishes WHERE id=$1;", [id]);
+  if (result.rowCount === 0) {
     return c.json({ message: "Fish not found" }, 404);
   }
 
@@ -194,23 +187,24 @@ fishRoutes.patch("/:id", zValidator("json", FishSchema), async (c) => {
     `, updated_at=CURRENT_TIMESTAMP WHERE id=$${count} RETURNING *;`;
   values.push(id);
 
-  console.log(query);
-  console.log(values);
+  const updatedResult = await pool.query(query, values);
 
-  const res = await pool.query(query, values);
-
-  return c.json({ message: "Fish is updated", data: res.rows[0] }, 200);
+  return c.json(
+    { message: "Fish is updated", data: updatedResult.rows[0] },
+    200,
+  );
 });
 
 fishRoutes.delete("/:id", async (c) => {
   const id = c.req.param("id");
-  const res = await pool.query(`DELETE FROM fishes WHERE id=$1 RETURNING *`, [
-    id,
-  ]);
+  const result = await pool.query(
+    `DELETE FROM fishes WHERE id=$1 RETURNING *;`,
+    [id],
+  );
 
-  if (res.rowCount === 0) {
+  if (result.rowCount === 0) {
     return c.json({ message: "Fish not found", data: null }, 404);
   }
 
-  return c.json({ message: "Fish deleted", data: res.rows[0] }, 200);
+  return c.json({ message: "Fish deleted", data: result.rows[0] }, 200);
 });

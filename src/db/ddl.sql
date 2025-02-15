@@ -24,7 +24,6 @@ CREATE TABLE predators (
 
 CREATE TABLE fishes_predators (
 	id UUID PRIMARY KEY,
-	name VARCHAR NOT NULL,
 	fish_id UUID NOT NULL,
 	predator_id UUID NOT NULL,
 	created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
