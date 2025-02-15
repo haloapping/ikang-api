@@ -1,118 +1,214 @@
 import { zValidator } from "@hono/zod-validator";
 import { randomUUIDv7 } from "bun";
 import { Hono } from "hono";
-import { fishes } from "../data";
+import { pool } from "../db";
 import { type Fish, FishSchema } from "../types/fish";
 
 export const fishRoutes = new Hono();
 
-fishRoutes.get("/", (c) => {
-  return c.json({ count: fishes.length, data: fishes });
+fishRoutes.get("/", async (c) => {
+  const res = await pool.query(`SELECT * FROM fishes`);
+
+  return c.json({ count: res.rowCount, data: res.rows });
 });
 
-fishRoutes.get("/search", (c) => {
+fishRoutes.get("/search", async (c) => {
   const q = c.req.query("q") || "";
   const keyword = q.toLowerCase();
-  const foundFishes = fishes.filter(
-    (fish) =>
-      fish.name?.toLowerCase().includes(keyword) ||
-      fish.scientificName?.toLowerCase().includes(keyword) ||
-      fish.habitat?.toLowerCase().includes(keyword) ||
-      fish.size?.toLowerCase().includes(keyword) ||
-      fish.diet?.toLowerCase().includes(keyword) ||
-      fish.lifespan?.toLowerCase().includes(keyword) ||
-      fish.status?.toLowerCase().includes(keyword) ||
-      fish.color?.toLowerCase().includes(keyword) ||
-      fish.waterType?.toLowerCase().includes(keyword) ||
-      fish.status?.toLowerCase().includes(keyword) ||
-      fish.reproduction?.toLowerCase().includes(keyword) ||
-      fish.predators?.toString().toLowerCase().includes(keyword) ||
-      fish.behavior?.toLowerCase().includes(keyword),
+  const res = await pool.query(
+    `SELECT * FROM fishes
+     WHERE name ILIKE $1 OR
+         scientific_name ILIKE $2 OR
+         size ILIKE $3 OR
+         diet ILIKE $4 OR
+         lifespan ILIKE $5 OR
+         status ILIKE $6 OR
+         color ILIKE $7 OR
+         water_type ILIKE $8 OR
+         reproduction ILIKE $9 OR
+         behavior ILIKE $10;`,
+    [
+      `%${keyword}%`,
+      `%${keyword}%`,
+      `%${keyword}%`,
+      `%${keyword}%`,
+      `%${keyword}%`,
+      `%${keyword}%`,
+      `%${keyword}%`,
+      `%${keyword}%`,
+      `%${keyword}%`,
+      `%${keyword}%`,
+    ],
   );
 
-  return c.json({ count: foundFishes.length, data: foundFishes }, 200);
+  if (res.rowCount === 0) {
+    return c.json({ count: res.rowCount, data: null }, 200);
+  }
+
+  return c.json({ count: res.rowCount, data: res.rows }, 200);
 });
 
-fishRoutes.get("/:id", (c) => {
+fishRoutes.get("/:id", async (c) => {
   const id = c.req.param("id");
-  const fish = fishes.find((fish) => fish.id === id);
-  if (!fish) {
+  const res = await pool.query("SELECT * FROM fishes WHERE id=$1", [id]);
+  if (res.rowCount === 0) {
     return c.json({ message: "Fish not found", data: null }, 404);
   }
 
-  return c.json({ message: "Fish found", data: fish });
+  return c.json({ message: "Fish found", data: res.rows[0] });
 });
 
 fishRoutes.post("/", zValidator("json", FishSchema), async (c) => {
+  console.log(Bun.env.DB_PASSWORD);
   const fishJSON: Fish = await c.req.json();
-  const newFish = {
-    id: randomUUIDv7(),
-    ...fishJSON,
-    createdAt: new Date(),
-    updatedAt: null,
-  };
-  fishes.push(newFish);
+  const res = await pool.query(
+    `INSERT INTO fishes(id, name, scientific_name, habitat, size, diet, lifespan, status, color, water_type, reproduction, behavior)
+     VALUES($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12)
+     RETURNING *;`,
+    [
+      randomUUIDv7(),
+      fishJSON.name,
+      fishJSON.scientificName,
+      fishJSON.habitat,
+      fishJSON.size,
+      fishJSON.diet,
+      fishJSON.lifespan,
+      fishJSON.status,
+      fishJSON.color,
+      fishJSON.waterType,
+      fishJSON.reproduction,
+      fishJSON.behavior,
+    ],
+  );
 
-  return c.json({ message: "Fish added", data: newFish }, 201);
+  return c.json({ message: "Fish added", data: res.rows[0] }, 201);
 });
 
 fishRoutes.put("/:id", zValidator("json", FishSchema), async (c) => {
   const id = c.req.param("id");
-  const idxFish = fishes.findIndex((fish) => fish.id === id);
+  const fishById = await pool.query(`SELECT id FROM fishes WHERE id=$1`, [id]);
+
   const updatedFishJSON: Fish = await c.req.json();
-  if (idxFish === -1) {
-    fishes.push({
-      id: id,
+  if (fishById.rowCount === 0) {
+    const newFish = {
+      id: randomUUIDv7(),
       ...updatedFishJSON,
       createdAt: new Date(),
       updatedAt: null,
-    });
+    };
+
+    const insertFish = await pool.query(
+      `INSERT INTO fishes(id, name, scientific_name, habitat, size, diet, lifespan, status, color, water_type, reproduction, behavior)
+       VALUES($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12)
+       RETURNING *;`,
+      [
+        randomUUIDv7(),
+        newFish.name,
+        newFish.scientificName,
+        newFish.habitat,
+        newFish.size,
+        newFish.diet,
+        newFish.lifespan,
+        newFish.status,
+        newFish.color,
+        newFish.waterType,
+        newFish.reproduction,
+        newFish.behavior,
+      ],
+    );
 
     return c.json(
       {
-        message: "Fish not found, added fish",
-        data: fishes[fishes.length - 1],
+        message: "Fish not found, added fish data",
+        data: insertFish.rows[0],
       },
       200,
     );
   }
 
-  fishes[idxFish] = {
-    id,
+  const updatedFish = {
+    id: id,
     ...updatedFishJSON,
-    createdAt: fishes[idxFish].createdAt,
     updatedAt: new Date(),
   };
 
-  return c.json({ message: "Fish updated", data: fishes[idxFish] }, 200);
+  const updateFish = await pool.query(
+    `UPDATE fishes
+     SET
+        name=$1,
+        scientific_name=$2,
+        habitat=$3,
+        size=$4,
+        diet=$5,
+        lifespan=$6,
+        status=$7,
+        color=$8,
+        water_type=$9,
+        reproduction=$10,
+        behavior=$11,
+        created_at=$12,
+        updated_at=$13
+     WHERE id=$14
+     RETURNING *;`,
+    [
+      updatedFishJSON.name,
+      updatedFishJSON.scientificName,
+      updatedFishJSON.habitat,
+      updatedFishJSON.size,
+      updatedFishJSON.diet,
+      updatedFishJSON.lifespan,
+      updatedFishJSON.status,
+      updatedFishJSON.color,
+      updatedFishJSON.waterType,
+      updatedFishJSON.reproduction,
+      updatedFishJSON.behavior,
+      fishById.rows[0][12],
+      new Date(),
+      id,
+    ],
+  );
+
+  return c.json({ message: "Fish updated", data: updateFish.rows[0] }, 200);
 });
 
 fishRoutes.patch("/:id", zValidator("json", FishSchema), async (c) => {
   const id = c.req.param("id");
-  const idxFish = fishes.findIndex((fish) => fish.id === id);
-  if (idxFish === -1) {
+  const fishData = await pool.query("SELECT id FROM fishes WHERE id=$1", [id]);
+  if (fishData.rowCount === 0) {
     return c.json({ message: "Fish not found" }, 404);
   }
 
-  const updatedFishJSON: Fish = await c.req.json();
-  fishes[idxFish] = {
-    ...fishes[idxFish],
-    ...updatedFishJSON,
-    updatedAt: new Date(),
-  };
+  let query = `UPDATE fishes SET updated_at=CURRENT_TIMESTAMP, `;
+  let values: any[] = [];
+  let count: number = 1;
 
-  return c.json({ message: "Fish is updated", data: fishes[idxFish] }, 200);
+  const fishDataJSON: Fish = await c.req.json();
+  for (const [key, value] of Object.entries(fishDataJSON)) {
+    query += `${key}=$${count}, `;
+    values.push(value);
+    count++;
+  }
+
+  query = query.slice(0, -2) + ` WHERE id=$${count} RETURNING *;`;
+  values.push(id);
+
+  console.log(query);
+  console.log(values);
+
+  const res = await pool.query(query, values);
+
+  return c.json({ message: "Fish is updated", data: res.rows[0] }, 200);
 });
 
-fishRoutes.delete("/:id", (c) => {
+fishRoutes.delete("/:id", async (c) => {
   const id = c.req.param("id");
-  const idxFish = fishes.findIndex((fish) => fish.id === id);
+  const res = await pool.query(`DELETE FROM fishes WHERE id=$1 RETURNING *`, [
+    id,
+  ]);
 
-  if (idxFish === -1) {
-    return c.json({ message: "Fish not found" }, 404);
+  if (res.rowCount === 0) {
+    return c.json({ message: "Fish not found", data: null }, 404);
   }
 
-  fishes.splice(idxFish, 1);
-
-  return c.json({ message: "Fish is deleted" });
+  return c.json({ message: "Fish deleted", data: res.rows[0] }, 200);
 });
