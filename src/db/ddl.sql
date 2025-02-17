@@ -31,3 +31,11 @@ CREATE TABLE fishes_predators (
 	FOREIGN KEY (fish_id) REFERENCES fishes (id),
 	FOREIGN KEY (predator_id) REFERENCES predators (id)
 );
+
+SELECT f.name AS fish_name, p.name AS predator_name FROM fishes_predators AS fd
+INNER JOIN fishes AS f ON fd.fish_id = f.id
+INNER JOIN predators AS p ON fd.predator_id  = p.id;
+
+
+
+
