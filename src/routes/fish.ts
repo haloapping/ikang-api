@@ -28,7 +28,7 @@ fishRoutes.get("/search", async (c) => {
     const keyword = q.toLowerCase();
     const result = await client.query(
       `SELECT * FROM fishes
-     WHERE name ILIKE $1 OR
+       WHERE name ILIKE $1 OR
            scientific_name ILIKE $2 OR
            size ILIKE $3 OR
            diet ILIKE $4 OR
@@ -65,11 +65,67 @@ fishRoutes.get("/:id", async (c) => {
 
   try {
     const id = c.req.param("id");
-    const result = await client.query("SELECT * FROM fishes WHERE id=$1;", [
+    const fishResult = await client.query("SELECT * FROM fishes WHERE id=$1;", [
       id,
     ]);
 
-    return c.json({ count: result.rowCount, data: result.rows[0] });
+    const isGetHabitat = c.req.query("habitat");
+    let habitats = [];
+    if (isGetHabitat === "true") {
+      const habitatResult = await client.query(
+        `SELECT h.name FROM fishes_habitats AS fh 
+         INNER JOIN fishes AS f ON fh.fish_id = f.id
+         INNER JOIN habitats AS h ON fh.habitat_id = h.id
+         WHERE f.id = $1;`,
+        [id],
+      );
+      const habitatRows = habitatResult.rows;
+      for (let i = 0; i < habitatRows.length; i++) {
+        habitats.push(habitatRows[i].name);
+      }
+    }
+
+    const isGetPredator = c.req.query("predator");
+    let predators = [];
+    if (isGetPredator === "true") {
+      const predatorResult = await client.query(
+        `SELECT p.name FROM fishes_predators AS fd
+         INNER JOIN fishes AS f ON fd.fish_id = f.id
+         INNER JOIN predators AS p ON fd.predator_id = p.id
+         WHERE f.id = $1;`,
+        [id],
+      );
+      const predatorRows = predatorResult.rows;
+      for (let i = 0; i < predatorRows.length; i++) {
+        predators.push(predatorRows[i].name);
+      }
+    }
+
+    if (isGetHabitat === "true" && isGetPredator === "true") {
+      const data = {
+        ...fishResult.rows[0],
+        habitats: habitats,
+        predators: predators,
+      };
+
+      return c.json({ count: fishResult.rowCount, data: data });
+    } else if (isGetHabitat === "true") {
+      const data = {
+        ...fishResult.rows[0],
+        habitats: habitats,
+      };
+
+      return c.json({ count: fishResult.rowCount, data: data });
+    } else if (isGetPredator === "true") {
+      const data = {
+        ...fishResult.rows[0],
+        predators: predators,
+      };
+
+      return c.json({ count: fishResult.rowCount, data: data });
+    } else {
+      return c.json({ count: fishResult.rowCount, data: fishResult.rows[0] });
+    }
   } catch (error) {
     return c.json({ error: error }, 400);
   } finally {
@@ -251,18 +307,32 @@ fishRoutes.delete("/:id", async (c) => {
 
   try {
     const id = c.req.param("id");
-    const result = await client.query(
-      `DELETE FROM fishes_predators AS fd USING fishes AS f WHERE fd.fish_id = f.id AND f.id=$1 RETURNING *;`,
+
+    const deleteFishFromPredatorResult = await client.query(
+      `DELETE FROM fishes_predators WHERE fish_id=$1;`,
       [id],
     );
 
-    if (result.rowCount === 0) {
+    const deleteFishFromHabitatResult = await client.query(
+      `DELETE FROM fishes_habitats WHERE fish_id=$1;`,
+      [id],
+    );
+
+    const deleteFishResult = await client.query(
+      `DELETE FROM fishes WHERE id=$1 RETURNING *;`,
+      [id],
+    );
+
+    if (deleteFishResult.rowCount === 0) {
       return c.json({ message: "Fish not found", data: null }, 404);
     }
 
-    return c.json({ message: "Fish deleted", data: result.rows[0] }, 200);
+    return c.json(
+      { message: "Fish deleted", data: deleteFishResult.rows[0] },
+      200,
+    );
   } catch (error) {
-    return c.json({ error: "Cannot delete: referenced by other records" }, 409);
+    return c.json({ error: error }, 409);
   } finally {
     client.release(true);
   }
