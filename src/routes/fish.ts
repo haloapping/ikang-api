@@ -10,7 +10,7 @@ fishRoutes.get("/", async (c) => {
   const client = await pool.connect();
 
   try {
-    const result = await client.query(`SELECT * FROM fishes`);
+    const result = await client.query(`SELECT * FROM fishes;`);
 
     return c.json({ count: result.rowCount, data: result.rows });
   } catch (error) {
@@ -65,7 +65,7 @@ fishRoutes.get("/:id", async (c) => {
 
   try {
     const id = c.req.param("id");
-    const fishResult = await client.query("SELECT * FROM fishes WHERE id=$1;", [
+    const fishResult = await client.query(`SELECT * FROM fishes WHERE id=$1;`, [
       id,
     ]);
 
@@ -139,14 +139,13 @@ fishRoutes.post("/", zValidator("json", FishSchema), async (c) => {
   try {
     const fishJSON: Fish = await c.req.json();
     const result = await client.query(
-      `INSERT INTO fishes(id, name, scientific_name, habitat, size, diet, lifespan, status, color, water_type, reproduction, behavior)
-     VALUES($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12)
-     RETURNING *;`,
+      `INSERT INTO fishes(id, name, scientific_name, size, diet, lifespan, status, color, water_type, reproduction, behavior)
+       VALUES($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11)
+       RETURNING *;`,
       [
         randomUUIDv7(),
         fishJSON.name,
         fishJSON.scientificName,
-        fishJSON.habitat,
         fishJSON.size,
         fishJSON.diet,
         fishJSON.lifespan,
@@ -186,8 +185,8 @@ fishRoutes.put("/:id", zValidator("json", FishSchema), async (c) => {
 
       const result = await pool.query(
         `INSERT INTO fishes(id, name, scientific_name, habitat, size, diet, lifespan, status, color, water_type, reproduction, behavior)
-       VALUES($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12)
-       RETURNING *;`,
+         VALUES($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12)
+         RETURNING *;`,
         [
           randomUUIDv7(),
           newFish.name,
@@ -265,7 +264,7 @@ fishRoutes.patch("/:id", zValidator("json", FishSchema), async (c) => {
 
   try {
     const id = c.req.param("id");
-    const result = await client.query("SELECT id FROM fishes WHERE id=$1;", [
+    const result = await client.query(`SELECT id FROM fishes WHERE id=$1;`, [
       id,
     ]);
 
@@ -307,16 +306,6 @@ fishRoutes.delete("/:id", async (c) => {
 
   try {
     const id = c.req.param("id");
-
-    const deleteFishFromPredatorResult = await client.query(
-      `DELETE FROM fishes_predators WHERE fish_id=$1;`,
-      [id],
-    );
-
-    const deleteFishFromHabitatResult = await client.query(
-      `DELETE FROM fishes_habitats WHERE fish_id=$1;`,
-      [id],
-    );
 
     const deleteFishResult = await client.query(
       `DELETE FROM fishes WHERE id=$1 RETURNING *;`,
