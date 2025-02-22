@@ -1,7 +1,7 @@
 CREATE TABLE fishes (
 	id UUID PRIMARY KEY,
-	name VARCHAR NOT NULL,
-	scientific_name VARCHAR DEFAULT NULL,
+	name VARCHAR NOT NULL UNIQUE,
+	scientific_name VARCHAR DEFAULT NULL UNIQUE,
 	habitat VARCHAR DEFAULT NULL,
 	size VARCHAR DEFAULT NULL,
 	diet VARCHAR DEFAULT NULL,
@@ -19,7 +19,7 @@ CREATE INDEX idx_fishes ON fishes (id, name);
 
 CREATE TABLE predators (
 	id UUID PRIMARY KEY,
-	name VARCHAR NOT NULL,
+	name VARCHAR NOT NULL UNIQUE,
 	created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
 	updated_at TIMESTAMP DEFAULT NULL
 );
@@ -39,7 +39,7 @@ CREATE TYPE habitat_enum AS ENUM (
 
 CREATE TABLE habitats (
 	id UUID PRIMARY KEY,
-	name habitat_enum NOT NULL,
+	name habitat_enum NOT NULL UNIQUE,
 	created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
 	updated_at TIMESTAMP DEFAULT NULL
 );
@@ -52,9 +52,9 @@ CREATE TABLE fishes_habitats (
 	habitat_id UUID NOT NULL,
 	created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
 	updated_at TIMESTAMP DEFAULT NULL,
-	FOREIGN KEY (fish_id) REFERENCES fishes (id),
-	FOREIGN KEY (habitat_id) REFERENCES habitats (id)
-)
+	FOREIGN KEY(fish_id) REFERENCES fishes(id) ON DELETE CASCADE,
+	FOREIGN KEY(habitat_id) REFERENCES habitats(id)  ON DELETE CASCADE
+);
 
 CREATE TABLE fishes_predators (
 	id UUID PRIMARY KEY,
@@ -62,12 +62,9 @@ CREATE TABLE fishes_predators (
 	predator_id UUID NOT NULL,
 	created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
 	updated_at TIMESTAMP DEFAULT NULL,
-	FOREIGN KEY (fish_id) REFERENCES fishes (id),
-	FOREIGN KEY (predator_id) REFERENCES predators (id)
+	FOREIGN KEY(fish_id) REFERENCES fishes(id) ON DELETE CASCADE,
+	FOREIGN KEY(predator_id) REFERENCES predators(id) ON DELETE CASCADE
 );
 
-
-
-
-
-
+DROP TABLE fishes_habitats, fishes_predators, fishes, predators;
+DROP TABLE habitats;

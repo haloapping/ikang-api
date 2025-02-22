@@ -34,3 +34,5 @@ INSERT INTO fishes (
     NOW(),
     NULL
 );
+
+SHOW TIMEZONE;

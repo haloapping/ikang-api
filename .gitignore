@@ -1,5 +1,8 @@
+# deps
+node_modules/
+
 # git
 .env
 
-# deps
-node_modules/
+# docker
+docker-compose.yml
