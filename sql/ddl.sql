@@ -10,8 +10,8 @@ CREATE TABLE fishes (
 	water_type VARCHAR DEFAULT NULL,
 	reproduction VARCHAR DEFAULT NULL,
 	behavior VARCHAR DEFAULT NULL,
-	created_at TIMESTAMP DEFAULT NOW(),
-	updated_at TIMESTAMP DEFAULT NULL
+	created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+  updated_at TIMESTAMP DEFAULT NULL
 );
 
 CREATE INDEX idx_fishes ON fishes (id, name);
@@ -19,7 +19,7 @@ CREATE INDEX idx_fishes ON fishes (id, name);
 CREATE TABLE predators (
 	id UUID PRIMARY KEY,
 	name VARCHAR NOT NULL,
-	created_at TIMESTAMP DEFAULT NOW(),
+	created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
 	updated_at TIMESTAMP DEFAULT NULL
 );
 
@@ -39,7 +39,7 @@ CREATE TYPE habitat_enum AS ENUM (
 CREATE TABLE habitats (
 	id UUID PRIMARY KEY,
 	name habitat_enum NOT NULL,
-	created_at TIMESTAMP DEFAULT NOW(),
+	created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
 	updated_at TIMESTAMP DEFAULT NULL
 );
 
@@ -49,7 +49,7 @@ CREATE TABLE fishes_habitats (
 	id UUID PRIMARY KEY,
 	fish_id UUID NOT NULL,
 	habitat_id UUID NOT NULL,
-	created_at TIMESTAMP DEFAULT NOW(),
+  created_at TIMESTAMP DEFAULT NOW(),
 	updated_at TIMESTAMP DEFAULT NULL,
 	FOREIGN KEY(fish_id) REFERENCES fishes(id) ON DELETE CASCADE,
 	FOREIGN KEY(habitat_id) REFERENCES habitats(id)  ON DELETE CASCADE
@@ -73,7 +73,3 @@ DELETE FROM fishes_predators;
 DELETE FROM fishes;
 DELETE FROM habitats;
 DELETE FROM predators;
-
-
-
-
