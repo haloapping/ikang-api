@@ -1,0 +1,72 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+// Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?
+// Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model Fish {
+  id             String         @id @default(ulid())
+  name           String         @unique
+  scientificName String         @unique
+  size           String
+  diet           String
+  lifespan       String
+  status         String
+  color          String
+  waterType      String
+  reproduction   String
+  behavior       String
+  createdAt      DateTime       @default(now())
+  updatedAt      DateTime?
+  habitats       FishHabitat[]
+  predators      FishPredator[]
+}
+
+model Habitat {
+  id        String        @id @default(ulid())
+  name      String        @unique
+  createdAt DateTime      @default(now())
+  updatedAt DateTime?
+  fishes    FishHabitat[]
+}
+
+model Predator {
+  id        String         @id @default(ulid())
+  name      String         @unique
+  createdAt DateTime       @default(now())
+  updatedAt DateTime?
+  predators FishPredator[]
+}
+
+model FishHabitat {
+  id        String    @default(ulid())
+  fish      Fish      @relation(fields: [fishId], references: [id])
+  fishId    String
+  habitat   Habitat   @relation(fields: [habitatId], references: [id])
+  habitatId String
+  createdAt DateTime  @default(now())
+  updatedAt DateTime?
+
+  @@id([id, fishId, habitatId])
+}
+
+model FishPredator {
+  id         String    @default(ulid())
+  fish       Fish      @relation(fields: [fishId], references: [id])
+  fishId     String
+  predator   Predator  @relation(fields: [predatorId], references: [id])
+  predatorId String
+  createdAt  DateTime  @default(now())
+  updatedAt  DateTime?
+
+  @@id([id, fishId, predatorId])
+}
