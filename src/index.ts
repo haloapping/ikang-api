@@ -1,10 +1,10 @@
 import { Hono } from "hono";
 import { logger } from "hono/logger";
 import { fishRoutes } from "./routes/fish";
-import { predatorRoutes } from "./routes/predator";
+import { fishHabitatRoutes } from "./routes/fish-habitat";
 import { fishPredatorRoutes } from "./routes/fish-predator";
 import { habitatRoutes } from "./routes/habitat";
-import { fishHabitatRoutes } from "./routes/fish-habitat";
+import { predatorRoutes } from "./routes/predator";
 
 const app = new Hono();
 

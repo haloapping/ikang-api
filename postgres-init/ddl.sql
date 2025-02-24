@@ -1,3 +1,15 @@
+DO $$ BEGIN
+    IF NOT EXISTS (SELECT FROM pg_database WHERE datname = 'ikang') THEN
+  		RAISE NOTICE 'Creating database...';
+        CREATE DATABASE ikang;
+  		RAISE NOTICE 'Database created successfully.';
+    END IF;
+END $$;
+
+DO $$ BEGIN
+  RAISE NOTICE 'Creating tables...';
+END $$;
+
 CREATE TABLE IF NOT EXISTS fishes (
 	id UUID PRIMARY KEY,
 	name VARCHAR NOT NULL,
@@ -65,5 +77,6 @@ CREATE TABLE IF NOT EXISTS fishes_predators (
 	FOREIGN KEY(predator_id) REFERENCES predators(id) ON DELETE CASCADE
 );
 
-DROP TABLE fishes_habitats, fishes_predators, fishes, predators, habitats;
-DROP TYPE habitat_enum;
+DO $$ BEGIN
+  RAISE NOTICE 'Tables created successfully.';
+END $$;

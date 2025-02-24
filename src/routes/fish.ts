@@ -79,9 +79,8 @@ fishRoutes.get("/:id", async (c) => {
          WHERE f.id = $1;`,
         [id],
       );
-      const habitatRows = habitatResult.rows;
-      for (let i = 0; i < habitatRows.length; i++) {
-        habitats.push(habitatRows[i].name);
+      for (let i = 0; i < habitatResult.rows.length; i++) {
+        habitats.push(habitatResult.rows[i].name);
       }
     }
 
@@ -95,9 +94,8 @@ fishRoutes.get("/:id", async (c) => {
          WHERE f.id = $1;`,
         [id],
       );
-      const predatorRows = predatorResult.rows;
-      for (let i = 0; i < predatorRows.length; i++) {
-        predators.push(predatorRows[i].name);
+      for (let i = 0; i < predatorResult.rows.length; i++) {
+        predators.push(predatorResult.rows[i].name);
       }
     }
 

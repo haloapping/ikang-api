@@ -4,8 +4,8 @@ import { generateFakeFishPredator } from "./fish-predator-fake";
 import { generateFakeHabitat } from "./habitat-fake";
 import { generateFakePredator } from "./predator-fake";
 
-// generateFakeFish(10);
+generateFakeFish(10);
 generateFakePredator(100);
 generateFakeHabitat();
-generateFakeFishHabitat(100);
-generateFakeFishPredator(100);
+// generateFakeFishHabitat(100);
+// generateFakeFishPredator(100);

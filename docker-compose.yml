@@ -1,5 +1,19 @@
 services:
+  # app:
+  #   container_name: "ikang-backend"
+  #   build: .
+  #   ports:
+  #     - "3000:3000"
+  #   environment:
+  #     - NODE_ENV=.env
+  #   volumes:
+  #     - .:/app
+  #     - /app/node_modules
+  #   command: bun start
+  #   depends_on:
+  #     - database
   database:
+    container_name: "ikang-db"
     image: ${POSTGRES_IMAGE}
     ports:
       - "${POSTGRES_PORT}:${POSTGRES_PORT}"
@@ -8,6 +22,8 @@ services:
       POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
       POSTGRES_DB: ${POSTGRES_DB}
     volumes:
-      - pgdata:/var/lib/postgresql/data
+      - postgres-data:/var/lib/postgresql/data
+      - ./postgres-init/ddl.sql:/docker-entrypoint-initdb.d/ddl.sql
+
 volumes:
-  pgdata:
+  postgres-data:
