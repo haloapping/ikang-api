@@ -2,6 +2,10 @@
 
 REST API about fish.
 
+## ERD
+
+![Ikang ERD](/assets/ikang-erd.png)
+
 ## REST API Specification
 
 | Path             | Method   | Description                            | Example                                                             |
