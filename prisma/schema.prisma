@@ -16,15 +16,15 @@ datasource db {
 model Fish {
   id             String         @id @default(ulid())
   name           String         @unique
-  scientificName String         @unique
-  size           String
-  diet           String
-  lifespan       String
-  status         String
-  color          String
-  waterType      String
-  reproduction   String
-  behavior       String
+  scientificName String?        @unique
+  size           String?
+  diet           String?
+  lifespan       String?
+  status         String?
+  color          String?
+  waterType      String?
+  reproduction   String?
+  behavior       String?
   createdAt      DateTime       @default(now())
   updatedAt      DateTime?
   habitats       FishHabitat[]
@@ -49,9 +49,9 @@ model Predator {
 
 model FishHabitat {
   id        String    @default(ulid())
-  fish      Fish      @relation(fields: [fishId], references: [id])
+  fish      Fish      @relation(fields: [fishId], references: [id], onUpdate: Cascade, onDelete: Cascade)
   fishId    String
-  habitat   Habitat   @relation(fields: [habitatId], references: [id])
+  habitat   Habitat   @relation(fields: [habitatId], references: [id], onUpdate: Cascade, onDelete: Cascade)
   habitatId String
   createdAt DateTime  @default(now())
   updatedAt DateTime?
@@ -61,9 +61,9 @@ model FishHabitat {
 
 model FishPredator {
   id         String    @default(ulid())
-  fish       Fish      @relation(fields: [fishId], references: [id])
+  fish       Fish      @relation(fields: [fishId], references: [id], onUpdate: Cascade, onDelete: Cascade)
   fishId     String
-  predator   Predator  @relation(fields: [predatorId], references: [id])
+  predator   Predator  @relation(fields: [predatorId], references: [id], onUpdate: Cascade, onDelete: Cascade)
   predatorId String
   createdAt  DateTime  @default(now())
   updatedAt  DateTime?
