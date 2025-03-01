@@ -1,11 +1,10 @@
 import { zValidator } from "@hono/zod-validator";
-import { PrismaClient } from "@prisma/client";
 import { Hono } from "hono";
 import { ulid } from "ulid";
+import { prisma } from "../../prisma/prisma";
 import { type Fish, FishSchema } from "../types/fish";
 
 export const fishRoutes = new Hono();
-const prisma = new PrismaClient();
 
 fishRoutes.get("/", async (c) => {
   try {
