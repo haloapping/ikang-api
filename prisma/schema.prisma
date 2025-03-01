@@ -1,9 +1,3 @@
-// This is your Prisma schema file,
-// learn more about it in the docs: https://pris.ly/d/prisma-schema
-
-// Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?
-// Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
-
 generator client {
   provider = "prisma-client-js"
 }
@@ -49,24 +43,24 @@ model Predator {
 
 model FishHabitat {
   id        String    @default(ulid())
-  fish      Fish      @relation(fields: [fishId], references: [id], onUpdate: Cascade, onDelete: Cascade)
   fishId    String
-  habitat   Habitat   @relation(fields: [habitatId], references: [id], onUpdate: Cascade, onDelete: Cascade)
   habitatId String
   createdAt DateTime  @default(now())
   updatedAt DateTime?
+  fish      Fish      @relation(fields: [fishId], references: [id], onDelete: Cascade)
+  habitat   Habitat   @relation(fields: [habitatId], references: [id], onDelete: Cascade)
 
   @@id([id, fishId, habitatId])
 }
 
 model FishPredator {
   id         String    @default(ulid())
-  fish       Fish      @relation(fields: [fishId], references: [id], onUpdate: Cascade, onDelete: Cascade)
   fishId     String
-  predator   Predator  @relation(fields: [predatorId], references: [id], onUpdate: Cascade, onDelete: Cascade)
   predatorId String
   createdAt  DateTime  @default(now())
   updatedAt  DateTime?
+  fish       Fish      @relation(fields: [fishId], references: [id], onDelete: Cascade)
+  predator   Predator  @relation(fields: [predatorId], references: [id], onDelete: Cascade)
 
   @@id([id, fishId, predatorId])
 }
