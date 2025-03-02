@@ -1,6 +1,5 @@
 import { zValidator } from "@hono/zod-validator";
 import { Hono } from "hono";
-import { ulid } from "ulid";
 import { prisma } from "../../prisma/prisma";
 import { type Fish, FishSchema } from "../types/fish";
 
@@ -111,7 +110,6 @@ fishRoutes.post("/", zValidator("json", FishSchema), async (c) => {
     const fishJSON: Fish = await c.req.json();
     const result = await prisma.fish.create({
       data: {
-        id: ulid(),
         name: fishJSON.name,
         scientificName: fishJSON.scientificName,
         size: fishJSON.size,

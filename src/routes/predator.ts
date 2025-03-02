@@ -1,8 +1,7 @@
 import { zValidator } from "@hono/zod-validator";
 import { Hono } from "hono";
-import { ulid } from "ulid";
 import { prisma } from "../../prisma/prisma";
-import { Predator, PredatorSchema } from "../types/predator";
+import { type Predator, PredatorSchema } from "../types/predator";
 
 export const predatorRoutes = new Hono();
 
@@ -55,7 +54,6 @@ predatorRoutes.post("/", zValidator("json", PredatorSchema), async (c) => {
     const predatorJSON: Predator = await c.req.json();
     const result = await prisma.predator.create({
       data: {
-        id: ulid(),
         name: predatorJSON.name,
       },
     });

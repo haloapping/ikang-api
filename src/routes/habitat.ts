@@ -1,9 +1,7 @@
 import { zValidator } from "@hono/zod-validator";
 import { Hono } from "hono";
-import { ulid } from "ulid";
 import { prisma } from "../../prisma/prisma";
-import { Habitat, HabitatSchema } from "../types/habitat";
-import { Predator } from "../types/predator";
+import { type Habitat, HabitatSchema } from "../types/habitat";
 
 export const habitatRoutes = new Hono();
 
@@ -41,7 +39,6 @@ habitatRoutes.post("/", zValidator("json", HabitatSchema), async (c) => {
     const habitatJSON: Habitat = await c.req.json();
     const result = await prisma.habitat.create({
       data: {
-        id: ulid(),
         name: habitatJSON.name,
       },
     });
@@ -55,14 +52,13 @@ habitatRoutes.post("/", zValidator("json", HabitatSchema), async (c) => {
 habitatRoutes.patch("/:id", zValidator("json", HabitatSchema), async (c) => {
   try {
     const id = c.req.param("id");
-    const predatorJSON: Predator = await c.req.json();
+    const habitatJSON: Habitat = await c.req.json();
     prisma.habitat.update({
       where: {
         id: id,
       },
       data: {
-        id: ulid(),
-        name: predatorJSON.name,
+        name: habitatJSON.name,
       },
     });
   } catch (error) {}
