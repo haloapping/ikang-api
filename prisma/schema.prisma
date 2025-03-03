@@ -1,5 +1,6 @@
 generator client {
-  provider = "prisma-client-js"
+  provider        = "prisma-client-js"
+  previewFeatures = ["relationJoins"]
 }
 
 datasource db {
@@ -42,25 +43,21 @@ model Predator {
 }
 
 model FishHabitat {
-  id        String    @default(ulid())
+  id        String    @id @default(ulid())
   fishId    String
   habitatId String
   createdAt DateTime  @default(now())
   updatedAt DateTime?
   fish      Fish      @relation(fields: [fishId], references: [id], onDelete: Cascade)
   habitat   Habitat   @relation(fields: [habitatId], references: [id], onDelete: Cascade)
-
-  @@id([id, fishId, habitatId])
 }
 
 model FishPredator {
-  id         String    @default(ulid())
+  id         String    @id @default(ulid())
   fishId     String
   predatorId String
   createdAt  DateTime  @default(now())
   updatedAt  DateTime?
   fish       Fish      @relation(fields: [fishId], references: [id], onDelete: Cascade)
   predator   Predator  @relation(fields: [predatorId], references: [id], onDelete: Cascade)
-
-  @@id([id, fishId, predatorId])
 }
