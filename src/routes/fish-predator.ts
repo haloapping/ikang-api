@@ -1,22 +1,37 @@
 import { zValidator } from "@hono/zod-validator";
+import { PrismaClient } from "@prisma/client";
 import { Hono } from "hono";
-import { pool } from "../db/db";
 import { FishPredator, FishPredatorSchema } from "../types/fish-predator";
-import { randomUUIDv7 } from "bun";
 
 export const fishPredatorRoutes = new Hono();
+const prisma = new PrismaClient();
 
 fishPredatorRoutes.get("/", async (c) => {
-  const client = await pool.connect();
-
   try {
-    const result = await client.query(`SELECT * FROM fishes_predators;`);
+    const result = await prisma.fishPredator.findMany();
 
-    return c.json({ count: result.rowCount, data: result.rows });
+    return c.json({ count: result.length, data: result });
   } catch (error) {
     return c.json({ error: error }, 400);
-  } finally {
-    client.release(true);
+  }
+});
+
+fishPredatorRoutes.get("/:id", async (c) => {
+  try {
+    const id = c.req.param("id");
+    const result = await prisma.fishPredator.findFirstOrThrow({
+      where: {
+        id: id,
+      },
+    });
+
+    if (!result) {
+      return c.json({ message: "Data not found", data: null });
+    }
+
+    return c.json({ message: "Data found", data: result });
+  } catch (error) {
+    return c.json({ error: error }, 400);
   }
 });
 
@@ -24,20 +39,13 @@ fishPredatorRoutes.post(
   "/",
   zValidator("json", FishPredatorSchema),
   async (c) => {
-    const client = await pool.connect();
-
     const fishPredatorJSON: FishPredator = await c.req.json();
     try {
-      const result = await client.query(
-        `INSERT INTO fishes_predators(id, fish_id, predator_id) VALUES($1, $2, $3) RETURNING *`,
-        [randomUUIDv7(), fishPredatorJSON.fishId, fishPredatorJSON.predatorId],
-      );
+      const result = prisma.fishPredator.create({ data: fishPredatorJSON });
 
-      return c.json({ message: "Data added", data: result.rows[0] }, 201);
+      return c.json({ message: "Data added", data: result }, 201);
     } catch (error) {
       return c.json({ message: error, data: null }, 400);
-    } finally {
-      client.release(true);
     }
   },
 );

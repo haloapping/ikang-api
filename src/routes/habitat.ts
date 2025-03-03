@@ -1,75 +1,81 @@
-import { Hono } from "hono";
-import { pool } from "../db/db";
-import { Habitat, HabitatSchema } from "../types/habitat";
 import { zValidator } from "@hono/zod-validator";
-import { randomUUIDv7 } from "bun";
+import { Hono } from "hono";
+import { prisma } from "../../prisma/prisma";
+import { type Habitat, HabitatSchema } from "../types/habitat";
 
 export const habitatRoutes = new Hono();
 
 habitatRoutes.get("/", async (c) => {
-  const client = await pool.connect();
-
   try {
-    const result = await client.query(`SELECT * FROM habitats`);
+    const result = await prisma.habitat.findMany();
 
-    return c.json({ count: result.rowCount, data: result.rows });
+    return c.json({ count: result.length, data: result });
   } catch (error) {
     return c.json({ error: error }, 400);
-  } finally {
-    client.release(true);
   }
 });
 
 habitatRoutes.get("/:id", async (c) => {
-  const client = await pool.connect();
-
   try {
     const id = c.req.param("id");
-    const result = await client.query(`SELECT * FROM habitats WHERE id=$1;`, [
-      id,
-    ]);
+    const result = await prisma.habitat.findFirstOrThrow({
+      where: {
+        id: id,
+      },
+    });
 
-    return c.json({ count: result.rowCount, data: result.rows[0] });
+    if (!result) {
+      return c.json({ message: "Data not found", data: result });
+    } else {
+      return c.json({ message: "Data is found", data: result });
+    }
   } catch (error) {
     return c.json({ error: error }, 400);
-  } finally {
-    client.release(true);
   }
 });
 
 habitatRoutes.post("/", zValidator("json", HabitatSchema), async (c) => {
-  const client = await pool.connect();
-
   try {
     const habitatJSON: Habitat = await c.req.json();
-    const result = await client.query(
-      `INSERT INTO habitats(id, name) VALUES($1, $2) RETURNING *;`,
-      [randomUUIDv7(), habitatJSON.name],
-    );
+    const result = await prisma.habitat.create({
+      data: {
+        name: habitatJSON.name,
+      },
+    });
 
-    return c.json({ message: "Habitat added", data: result.rows[0] }, 201);
+    return c.json({ message: "Predator added", data: result }, 201);
   } catch (error) {
     return c.json({ error: error }, 400);
-  } finally {
-    client.release(true);
   }
+});
+
+habitatRoutes.patch("/:id", zValidator("json", HabitatSchema), async (c) => {
+  try {
+    const id = c.req.param("id");
+    const habitatJSON: Habitat = await c.req.json();
+    prisma.habitat.update({
+      where: {
+        id: id,
+      },
+      data: {
+        name: habitatJSON.name,
+      },
+    });
+  } catch (error) {}
 });
 
 habitatRoutes.delete("/:id", async (c) => {
   const id = c.req.param("id");
 
-  const client = await pool.connect();
-
   try {
-    const result = await client.query(
-      `DELETE FROM habitats WHERE id=$1 RETURNING *;`,
-      [id],
-    );
+    const result = await prisma.habitat.delete({
+      where: {
+        id: id,
+      },
+    });
 
-    return c.json({ message: "Habitat deleted", data: result.rows[0] }, 200);
+    return c.json({ message: "Habitat deleted", data: result }, 200);
   } catch (error) {
     return c.json({ error: error }, 400);
-  } finally {
-    client.release(true);
   }
 });

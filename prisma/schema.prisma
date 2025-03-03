@@ -1,0 +1,63 @@
+generator client {
+  provider        = "prisma-client-js"
+  previewFeatures = ["relationJoins"]
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model Fish {
+  id             String         @id @default(ulid())
+  name           String         @unique
+  scientificName String?        @unique
+  size           String?
+  diet           String?
+  lifespan       String?
+  status         String?
+  color          String?
+  waterType      String?
+  reproduction   String?
+  behavior       String?
+  createdAt      DateTime       @default(now())
+  updatedAt      DateTime?
+  habitats       FishHabitat[]
+  predators      FishPredator[]
+}
+
+model Habitat {
+  id        String        @id @default(ulid())
+  name      String        @unique
+  createdAt DateTime      @default(now())
+  updatedAt DateTime?
+  fishes    FishHabitat[]
+}
+
+model Predator {
+  id        String         @id @default(ulid())
+  name      String         @unique
+  createdAt DateTime       @default(now())
+  updatedAt DateTime?
+  predators FishPredator[]
+}
+
+model FishHabitat {
+  id        String    @id @default(ulid())
+  fishId    String
+  habitatId String
+  createdAt DateTime  @default(now())
+  updatedAt DateTime?
+  fish      Fish      @relation(fields: [fishId], references: [id], onDelete: Cascade)
+  habitat   Habitat   @relation(fields: [habitatId], references: [id], onDelete: Cascade)
+}
+
+model FishPredator {
+  id         String    @id @default(ulid())
+  fishId     String
+  predatorId String
+  createdAt  DateTime  @default(now())
+  updatedAt  DateTime?
+  fish       Fish      @relation(fields: [fishId], references: [id], onDelete: Cascade)
+  predator   Predator  @relation(fields: [predatorId], references: [id], onDelete: Cascade)
+}

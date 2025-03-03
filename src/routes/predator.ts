@@ -1,128 +1,105 @@
 import { zValidator } from "@hono/zod-validator";
-import { randomUUIDv7 } from "bun";
 import { Hono } from "hono";
-import { pool } from "../db/db";
-import { Predator, PredatorSchema } from "../types/predator";
+import { prisma } from "../../prisma/prisma";
+import { type Predator, PredatorSchema } from "../types/predator";
 
 export const predatorRoutes = new Hono();
 
 predatorRoutes.get("/", async (c) => {
-  const client = await pool.connect();
-
   try {
-    const predators = await client.query(`SELECT * FROM predators;`);
+    const result = await prisma.predator.findMany();
 
-    return c.json({ count: predators.rowCount, data: predators.rows });
+    return c.json({ count: result.length, data: result });
   } catch (error) {
     return c.json({ error: error }, 400);
-  } finally {
-    client.release(true);
   }
 });
 
 predatorRoutes.get("/search", async (c) => {
-  const client = await pool.connect();
-
   try {
-    const q = c.req.query("q") || "";
-    const keyword = q.toLowerCase();
-    const result = await client.query(
-      `SELECT * FROM predators WHERE name ILIKE $1;`,
-      [`%${keyword}%`],
-    );
+    const q = c.req.query("q")?.toLowerCase() || "";
+    const result = await prisma.predator.findMany({
+      where: {
+        OR: [{ name: { contains: q, mode: "insensitive" } }],
+      },
+    });
 
-    return c.json({ count: result.rowCount, data: result.rows }, 200);
+    return c.json({ count: result.length, data: result }, 200);
   } catch (error) {
     return c.json({ error: error }, 400);
-  } finally {
-    client.release(true);
   }
 });
 
 predatorRoutes.get("/:id", async (c) => {
-  const client = await pool.connect();
-
   try {
     const id = c.req.param("id");
-    const predator = await client.query(
-      `SELECT * FROM predators WHERE id=$1;`,
-      [id],
-    );
+    const predator = await prisma.predator.findFirstOrThrow({
+      where: {
+        id: id,
+      },
+    });
 
-    return c.json({ count: predator.rowCount, data: predator.rows[0] || null });
+    if (!predator) {
+      return c.json({ message: "Data not found", data: predator });
+    } else {
+      return c.json({ message: "Data is found", data: predator });
+    }
   } catch (error) {
     return c.json({ error: error }, 400);
-  } finally {
-    client.release(true);
   }
 });
 
 predatorRoutes.post("/", zValidator("json", PredatorSchema), async (c) => {
-  const client = await pool.connect();
-
   try {
     const predatorJSON: Predator = await c.req.json();
-    const result = await client.query(`INSERT INTO predators VALUES($1, $2);`, [
-      randomUUIDv7(),
-      predatorJSON.name,
-    ]);
+    const result = await prisma.predator.create({
+      data: {
+        name: predatorJSON.name,
+      },
+    });
 
-    return c.json({ message: "Predator added", data: result.rows[0] }, 201);
+    return c.json({ message: "Predator added", data: result }, 201);
   } catch (error) {
     return c.json({ error: error }, 400);
-  } finally {
-    client.release(true);
   }
 });
 
 predatorRoutes.patch("/:id", zValidator("json", PredatorSchema), async (c) => {
-  const client = await pool.connect();
-
   try {
     const id = c.req.param("id");
-    const result = await client.query(`SELECT id FROM predators WHERE id=$1`, [
-      id,
-    ]);
+    const predatorJSON: Predator = await c.req.json();
+    const result = await prisma.predator.update({
+      where: {
+        id: id,
+      },
+      data: predatorJSON,
+    });
 
-    if (result.rowCount === 0) {
+    if (!result) {
       return c.json({ message: "Predator not found", data: null }, 404);
     }
 
-    const predatorJSON: Predator = await c.req.json();
-    const updatedResult = await client.query(
-      `UPDATE predators SET name=$1, updated_at=CURRENT_TIMESTAMP WHERE id=$2 RETURNING *;`,
-      [predatorJSON.name, id],
-    );
-
-    return c.json(
-      { message: "Predator is updated", data: updatedResult.rows[0] },
-      200,
-    );
+    return c.json({ message: "Predator is updated", data: result }, 200);
   } catch (error) {
     return c.json({ error: error }, 400);
-  } finally {
-    client.release(true);
   }
 });
 
 predatorRoutes.delete("/:id", async (c) => {
-  const client = await pool.connect();
-
   try {
     const id = c.req.param("id");
-    const result = await client.query(
-      `DELETE FROM fishes_predators AS fd USING predators AS p WHERE fd.predator_id=p.id AND p.id=$1 RETURNING *;`,
-      [id],
-    );
+    const result = await prisma.predator.delete({
+      where: {
+        id: id,
+      },
+    });
 
-    if (result.rowCount === 0) {
+    if (!result) {
       return c.json({ message: "Predator not found", data: null }, 404);
     }
 
-    return c.json({ message: "Predator deleted", data: result.rows[0] }, 200);
+    return c.json({ message: "Predator deleted", data: result }, 200);
   } catch (error) {
     return c.json({ error: error }, 400);
-  } finally {
-    client.release(true);
   }
 });

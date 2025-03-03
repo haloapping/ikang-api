@@ -15,9 +15,9 @@ app.get("/", (c) => {
 });
 
 app.route("/fishes", fishRoutes);
-app.route("/predators", predatorRoutes);
-app.route("/fishes-predators", fishPredatorRoutes);
 app.route("/habitats", habitatRoutes);
+app.route("/predators", predatorRoutes);
 app.route("/fishes-habitats", fishHabitatRoutes);
+app.route("/fishes-predators", fishPredatorRoutes);
 
 export default app;
