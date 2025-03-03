@@ -1,19 +1,6 @@
 services:
-  # app:
-  #   container_name: "ikang-backend"
-  #   build: .
-  #   ports:
-  #     - "3000:3000"
-  #   environment:
-  #     - NODE_ENV=.env
-  #   volumes:
-  #     - .:/app
-  #     - /app/node_modules
-  #   command: bun start
-  #   depends_on:
-  #     - database
   database:
-    container_name: "ikang-db"
+    container_name: ikang-db
     image: postgres:alpine
     ports:
       - "5432:5432"
