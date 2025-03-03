@@ -1,8 +1,92 @@
-import { ulid } from "ulid";
+export const habitats = [
+  {
+    name: "Coral Reef",
+    slug: "coral-reef",
+  },
+  {
+    name: "Freshwater Lake",
+    slug: "freshwater-lake",
+  },
+  {
+    name: "Deep Ocean",
+    slug: "deep-ocean",
+  },
+  {
+    name: "Mangrove Forest",
+    slug: "mangrove-forest",
+  },
+  {
+    name: "Kelp Forest",
+    slug: "kelp-forest",
+  },
+  {
+    name: "Estuary",
+    slug: "estuary",
+  },
+  {
+    name: "Rocky Shore",
+    slug: "rocky-shore",
+  },
+  {
+    name: "Open Ocean",
+    slug: "open-ocean",
+  },
+  {
+    name: "River",
+    slug: "river",
+  },
+  {
+    name: "Swamp",
+    slug: "swamp",
+  },
+];
+
+export const predators = [
+  {
+    name: "Great White Shark",
+    slug: "great-white-shark",
+  },
+  {
+    name: "Killer Whale",
+    slug: "killer-whale",
+  },
+  {
+    name: "Barracuda",
+    slug: "barracuda",
+  },
+  {
+    name: "Lionfish",
+    slug: "lionfish",
+  },
+  {
+    name: "Moray Eel",
+    slug: "moray-eel",
+  },
+  {
+    name: "Piranha",
+    slug: "piranha",
+  },
+  {
+    name: "Tiger Shark",
+    slug: "tiger-shark",
+  },
+  {
+    name: "Giant Squid",
+    slug: "giant-squid",
+  },
+  {
+    name: "Saltwater Crocodile",
+    slug: "saltwater-crocodile",
+  },
+  {
+    name: "Bluefin Tuna",
+    slug: "bluefin-tuna",
+  },
+];
 
 export const fishes = [
   {
-    id: ulid(),
+    slug: "clownfish",
     name: "Clownfish",
     scientificName: "Amphiprion ocellaris",
     size: "10 cm",
@@ -13,9 +97,11 @@ export const fishes = [
     waterType: "Saltwater",
     reproduction: "Egg-layer",
     behavior: "Peaceful",
+    habitatSlugs: ["coral-reef"],
+    predatorSlugs: ["lionfish"],
   },
   {
-    id: ulid(),
+    slug: "betta",
     name: "Betta",
     scientificName: "Betta splendens",
     size: "7 cm",
@@ -28,7 +114,7 @@ export const fishes = [
     behavior: "Aggressive",
   },
   {
-    id: ulid(),
+    slug: "goldfish",
     name: "Goldfish",
     scientificName: "Carassius auratus",
     size: "20 cm",
@@ -41,7 +127,7 @@ export const fishes = [
     behavior: "Peaceful",
   },
   {
-    id: ulid(),
+    slug: "angelfish",
     name: "Angelfish",
     scientificName: "Pterophyllum scalare",
     size: "15 cm",
@@ -54,7 +140,7 @@ export const fishes = [
     behavior: "Semi-aggressive",
   },
   {
-    id: ulid(),
+    slug: "blue-tang",
     name: "Blue Tang",
     scientificName: "Paracanthurus hepatus",
     size: "30 cm",
@@ -67,7 +153,7 @@ export const fishes = [
     behavior: "Peaceful",
   },
   {
-    id: ulid(),
+    slug: "neon-tetra",
     name: "Neon Tetra",
     scientificName: "Paracheirodon innesi",
     size: "4 cm",
@@ -80,7 +166,7 @@ export const fishes = [
     behavior: "Peaceful",
   },
   {
-    id: ulid(),
+    slug: "discus",
     name: "Discus",
     scientificName: "Symphysodon spp.",
     size: "20 cm",
@@ -93,7 +179,7 @@ export const fishes = [
     behavior: "Peaceful",
   },
   {
-    id: ulid(),
+    slug: "lionfish",
     name: "Lionfish",
     scientificName: "Pterois volitans",
     size: "38 cm",
@@ -106,7 +192,7 @@ export const fishes = [
     behavior: "Aggressive",
   },
   {
-    id: ulid(),
+    slug: "guppy",
     name: "Guppy",
     scientificName: "Poecilia reticulata",
     size: "6 cm",
@@ -119,7 +205,7 @@ export const fishes = [
     behavior: "Peaceful",
   },
   {
-    id: ulid(),
+    slug: "oscar",
     name: "Oscar",
     scientificName: "Astronotus ocellatus",
     size: "35 cm",
@@ -130,91 +216,5 @@ export const fishes = [
     waterType: "Freshwater",
     reproduction: "Egg-layer",
     behavior: "Semi-aggressive",
-  },
-];
-
-export const habitats = [
-  {
-    id: ulid(),
-    name: "Coral Reef",
-  },
-  {
-    id: ulid(),
-    name: "Freshwater Lake",
-  },
-  {
-    id: ulid(),
-    name: "Deep Ocean",
-  },
-  {
-    id: ulid(),
-    name: "Mangrove Forest",
-  },
-  {
-    id: ulid(),
-    name: "Kelp Forest",
-  },
-  {
-    id: ulid(),
-    name: "Estuary",
-  },
-  {
-    id: ulid(),
-    name: "Rocky Shore",
-  },
-  {
-    id: ulid(),
-    name: "Open Ocean",
-  },
-  {
-    id: ulid(),
-    name: "River",
-  },
-  {
-    id: ulid(),
-    name: "Swamp",
-  },
-];
-
-export const predators = [
-  {
-    id: ulid(),
-    name: "Great White Shark",
-  },
-  {
-    id: ulid(),
-    name: "Killer Whale",
-  },
-  {
-    id: ulid(),
-    name: "Barracuda",
-  },
-  {
-    id: ulid(),
-    name: "Lionfish",
-  },
-  {
-    id: ulid(),
-    name: "Moray Eel",
-  },
-  {
-    id: ulid(),
-    name: "Piranha",
-  },
-  {
-    id: ulid(),
-    name: "Tiger Shark",
-  },
-  {
-    id: ulid(),
-    name: "Giant Squid",
-  },
-  {
-    id: ulid(),
-    name: "Saltwater Crocodile",
-  },
-  {
-    id: ulid(),
-    name: "Bluefin Tuna",
   },
 ];
