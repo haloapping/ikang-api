@@ -2,6 +2,7 @@ import { z } from "zod";
 
 export const HabitatSchema = z.object({
   id: z.string().optional(),
+  slug: z.string().min(1),
   name: z.enum([
     "Freshwater",
     "Saltwater",

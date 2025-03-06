@@ -10,6 +10,7 @@ datasource db {
 
 model Fish {
   id             String         @id @default(ulid())
+  slug           String
   name           String         @unique
   scientificName String?        @unique
   size           String?
@@ -20,44 +21,46 @@ model Fish {
   waterType      String?
   reproduction   String?
   behavior       String?
-  createdAt      DateTime       @default(now())
-  updatedAt      DateTime?
   habitats       FishHabitat[]
   predators      FishPredator[]
+  createdAt      DateTime       @default(now())
+  updatedAt      DateTime?      @updatedAt
 }
 
 model Habitat {
   id        String        @id @default(ulid())
+  slug      String
   name      String        @unique
-  createdAt DateTime      @default(now())
-  updatedAt DateTime?
   fishes    FishHabitat[]
+  createdAt DateTime      @default(now())
+  updatedAt DateTime?     @updatedAt
 }
 
 model Predator {
   id        String         @id @default(ulid())
+  slug      String
   name      String         @unique
-  createdAt DateTime       @default(now())
-  updatedAt DateTime?
   predators FishPredator[]
+  createdAt DateTime       @default(now())
+  updatedAt DateTime?      @updatedAt
 }
 
 model FishHabitat {
   id        String    @id @default(ulid())
   fishId    String
   habitatId String
-  createdAt DateTime  @default(now())
-  updatedAt DateTime?
   fish      Fish      @relation(fields: [fishId], references: [id], onDelete: Cascade)
   habitat   Habitat   @relation(fields: [habitatId], references: [id], onDelete: Cascade)
+  createdAt DateTime  @default(now())
+  updatedAt DateTime? @updatedAt
 }
 
 model FishPredator {
   id         String    @id @default(ulid())
   fishId     String
-  predatorId String
-  createdAt  DateTime  @default(now())
-  updatedAt  DateTime?
   fish       Fish      @relation(fields: [fishId], references: [id], onDelete: Cascade)
+  predatorId String
   predator   Predator  @relation(fields: [predatorId], references: [id], onDelete: Cascade)
+  createdAt  DateTime  @default(now())
+  updatedAt  DateTime? @updatedAt
 }

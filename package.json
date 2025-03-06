@@ -3,17 +3,23 @@
   "scripts": {
     "dev": "bun run --hot src/index.ts",
     "start": "bun run src/index.ts",
-    "format": "prettier --write ."
+    "format": "prettier --write .",
+    "db:migrate": "prisma migrate dev",
+    "db:reset": "prisma migrate reset",
+    "db:gen": "prisma generate",
+    "db:studio": "prisma studio",
+    "db:seed": "prisma db seed"
   },
   "prisma": {
     "seed": "ts-node prisma/seed.ts"
   },
   "dependencies": {
-    "@hono/zod-validator": "^0.4.2",
+    "@hono/zod-validator": "^0.4.3",
     "@prisma/client": "^6.4.1",
+    "@types/underscore": "^1.13.0",
     "hono": "^4.6.20",
-    "pg": "^8.13.3",
     "prisma": "^6.4.1",
+    "underscore": "^1.13.7",
     "zod": "^3.24.1"
   },
   "devDependencies": {

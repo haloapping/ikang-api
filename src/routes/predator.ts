@@ -54,6 +54,7 @@ predatorRoutes.post("/", zValidator("json", PredatorSchema), async (c) => {
     const predatorJSON: Predator = await c.req.json();
     const result = await prisma.predator.create({
       data: {
+        slug: predatorJSON.slug,
         name: predatorJSON.name,
       },
     });

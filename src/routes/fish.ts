@@ -110,6 +110,7 @@ fishRoutes.post("/", zValidator("json", FishSchema), async (c) => {
     const fishJSON: Fish = await c.req.json();
     const result = await prisma.fish.create({
       data: {
+        slug: fishJSON.slug,
         name: fishJSON.name,
         scientificName: fishJSON.scientificName,
         size: fishJSON.size,
