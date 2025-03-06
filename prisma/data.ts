@@ -1,8 +1,6 @@
-import { ulid } from "ulid";
-
 export const fishes = [
   {
-    id: ulid(),
+    slug: "clownfish",
     name: "Clownfish",
     scientificName: "Amphiprion ocellaris",
     size: "10 cm",
@@ -15,7 +13,7 @@ export const fishes = [
     behavior: "Peaceful",
   },
   {
-    id: ulid(),
+    slug: "betta",
     name: "Betta",
     scientificName: "Betta splendens",
     size: "7 cm",
@@ -28,7 +26,7 @@ export const fishes = [
     behavior: "Aggressive",
   },
   {
-    id: ulid(),
+    slug: "goldfish",
     name: "Goldfish",
     scientificName: "Carassius auratus",
     size: "20 cm",
@@ -41,7 +39,7 @@ export const fishes = [
     behavior: "Peaceful",
   },
   {
-    id: ulid(),
+    slug: "angelfish",
     name: "Angelfish",
     scientificName: "Pterophyllum scalare",
     size: "15 cm",
@@ -54,7 +52,7 @@ export const fishes = [
     behavior: "Semi-aggressive",
   },
   {
-    id: ulid(),
+    slug: "blue-tang",
     name: "Blue Tang",
     scientificName: "Paracanthurus hepatus",
     size: "30 cm",
@@ -67,7 +65,7 @@ export const fishes = [
     behavior: "Peaceful",
   },
   {
-    id: ulid(),
+    slug: "neon-tetra",
     name: "Neon Tetra",
     scientificName: "Paracheirodon innesi",
     size: "4 cm",
@@ -80,7 +78,7 @@ export const fishes = [
     behavior: "Peaceful",
   },
   {
-    id: ulid(),
+    slug: "discus",
     name: "Discus",
     scientificName: "Symphysodon spp.",
     size: "20 cm",
@@ -93,7 +91,7 @@ export const fishes = [
     behavior: "Peaceful",
   },
   {
-    id: ulid(),
+    slug: "lionfish",
     name: "Lionfish",
     scientificName: "Pterois volitans",
     size: "38 cm",
@@ -106,7 +104,7 @@ export const fishes = [
     behavior: "Aggressive",
   },
   {
-    id: ulid(),
+    slug: "guppy",
     name: "Guppy",
     scientificName: "Poecilia reticulata",
     size: "6 cm",
@@ -119,7 +117,7 @@ export const fishes = [
     behavior: "Peaceful",
   },
   {
-    id: ulid(),
+    slug: "oscar",
     name: "Oscar",
     scientificName: "Astronotus ocellatus",
     size: "35 cm",
@@ -135,86 +133,86 @@ export const fishes = [
 
 export const habitats = [
   {
-    id: ulid(),
+    slug: "coral-reef",
     name: "Coral Reef",
   },
   {
-    id: ulid(),
+    slug: "freshwater-lake",
     name: "Freshwater Lake",
   },
   {
-    id: ulid(),
+    slug: "deep-ocean",
     name: "Deep Ocean",
   },
   {
-    id: ulid(),
+    slug: "mangrove-forest",
     name: "Mangrove Forest",
   },
   {
-    id: ulid(),
+    slug: "kelp-forest",
     name: "Kelp Forest",
   },
   {
-    id: ulid(),
+    slug: "estuary",
     name: "Estuary",
   },
   {
-    id: ulid(),
+    slug: "rocky-shore",
     name: "Rocky Shore",
   },
   {
-    id: ulid(),
+    slug: "open-ocean",
     name: "Open Ocean",
   },
   {
-    id: ulid(),
+    slug: "river",
     name: "River",
   },
   {
-    id: ulid(),
+    slug: "swamp",
     name: "Swamp",
   },
 ];
 
 export const predators = [
   {
-    id: ulid(),
+    slug: "great-white-shark",
     name: "Great White Shark",
   },
   {
-    id: ulid(),
+    slug: "killer-whale",
     name: "Killer Whale",
   },
   {
-    id: ulid(),
+    slug: "barracuda",
     name: "Barracuda",
   },
   {
-    id: ulid(),
+    slug: "lionfish",
     name: "Lionfish",
   },
   {
-    id: ulid(),
+    slug: "moray-eel",
     name: "Moray Eel",
   },
   {
-    id: ulid(),
+    slug: "piranha",
     name: "Piranha",
   },
   {
-    id: ulid(),
+    slug: "tiger-shark",
     name: "Tiger Shark",
   },
   {
-    id: ulid(),
+    slug: "giant-squid",
     name: "Giant Squid",
   },
   {
-    id: ulid(),
+    slug: "saltwater-crocodile",
     name: "Saltwater Crocodile",
   },
   {
-    id: ulid(),
+    slug: "bluefin-tuna",
     name: "Bluefin Tuna",
   },
 ];
