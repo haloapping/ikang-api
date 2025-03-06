@@ -39,6 +39,7 @@ habitatRoutes.post("/", zValidator("json", HabitatSchema), async (c) => {
     const habitatJSON: Habitat = await c.req.json();
     const result = await prisma.habitat.create({
       data: {
+        slug: habitatJSON.slug,
         name: habitatJSON.name,
       },
     });
