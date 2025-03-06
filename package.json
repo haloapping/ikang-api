@@ -2,13 +2,16 @@
   "name": "ikang-api",
   "scripts": {
     "dev": "bun run --hot src/index.ts",
+    "build": "bun install && bun db:migrate:deploy && bun db:gen",
     "start": "bun run src/index.ts",
-    "format": "prettier --write .",
+    "docker:up": "docker compose up -d",
+    "docker:up:prod": "docker compose -f docker-compose.prod.yaml up -d",
     "db:migrate": "prisma migrate dev",
-    "db:reset": "prisma migrate reset",
-    "db:gen": "prisma generate",
+    "db:migrate:deploy": "prisma migrate deploy",
+    "db:gen": "prisma generate --no-hints",
+    "db:seed": "prisma db seed",
     "db:studio": "prisma studio",
-    "db:seed": "prisma db seed"
+    "db:reset": "prisma migrate reset --force"
   },
   "prisma": {
     "seed": "ts-node prisma/seed.ts"
