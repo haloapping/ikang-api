@@ -13,7 +13,7 @@ services:
   #   depends_on:
   #     - database
   database:
-    container_name: "ikang-db"
+    container_name: ikang-db
     image: postgres:alpine
     ports:
       - "5432:5432"
