@@ -9,10 +9,10 @@ datasource db {
 }
 
 model Fish {
-  id             String         @id @default(ulid())
+  id             String     @id @default(ulid())
   slug           String
-  name           String         @unique
-  scientificName String?        @unique
+  name           String     @unique
+  scientificName String?    @unique
   size           String?
   diet           String?
   lifespan       String?
@@ -21,46 +21,26 @@ model Fish {
   waterType      String?
   reproduction   String?
   behavior       String?
-  habitats       FishHabitat[]
-  predators      FishPredator[]
-  createdAt      DateTime       @default(now())
-  updatedAt      DateTime?      @updatedAt
+  createdAt      DateTime   @default(now())
+  updatedAt      DateTime?  @updatedAt
+  habitats       Habitat[]
+  predators      Predator[]
 }
 
 model Habitat {
-  id        String        @id @default(ulid())
+  id        String    @id @default(ulid())
   slug      String
-  name      String        @unique
-  fishes    FishHabitat[]
-  createdAt DateTime      @default(now())
-  updatedAt DateTime?     @updatedAt
+  name      String    @unique
+  createdAt DateTime  @default(now())
+  updatedAt DateTime? @updatedAt
+  fishes    Fish[]
 }
 
 model Predator {
-  id        String         @id @default(ulid())
-  slug      String
-  name      String         @unique
-  predators FishPredator[]
-  createdAt DateTime       @default(now())
-  updatedAt DateTime?      @updatedAt
-}
-
-model FishHabitat {
   id        String    @id @default(ulid())
-  fishId    String
-  habitatId String
-  fish      Fish      @relation(fields: [fishId], references: [id], onDelete: Cascade)
-  habitat   Habitat   @relation(fields: [habitatId], references: [id], onDelete: Cascade)
+  slug      String
+  name      String    @unique
   createdAt DateTime  @default(now())
   updatedAt DateTime? @updatedAt
-}
-
-model FishPredator {
-  id         String    @id @default(ulid())
-  fishId     String
-  fish       Fish      @relation(fields: [fishId], references: [id], onDelete: Cascade)
-  predatorId String
-  predator   Predator  @relation(fields: [predatorId], references: [id], onDelete: Cascade)
-  createdAt  DateTime  @default(now())
-  updatedAt  DateTime? @updatedAt
+  fishes    Fish[]
 }
