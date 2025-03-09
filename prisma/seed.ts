@@ -1,4 +1,5 @@
 import { PrismaClient } from "@prisma/client";
+import { random, sample } from "underscore";
 import { fishes, habitats, predators } from "./data";
 
 const prisma = new PrismaClient();
@@ -20,12 +21,19 @@ async function main() {
   });
   console.log("Predator data created");
 
-  const resultFishes = await prisma.fish.createManyAndReturn({
-    data: fishes,
-    select: {
-      id: true,
-    },
-  });
+  for (const fish of fishes) {
+    await prisma.fish.create({
+      data: {
+        ...fish,
+        habitats: {
+          connect: sample(resultHabitats, 1),
+        },
+        predators: {
+          connect: sample(resultPredators, random(1, predators.length - 1)),
+        },
+      },
+    });
+  }
   console.log("Fish data created");
 }
 
