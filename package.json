@@ -16,6 +16,7 @@
   "dependencies": {
     "@hono/zod-validator": "^0.4.3",
     "@prisma/client": "^6.4.1",
+    "@sentry/bun": "^9.5.0",
     "@types/underscore": "^1.13.0",
     "hono": "^4.6.20",
     "prisma": "^6.4.1",

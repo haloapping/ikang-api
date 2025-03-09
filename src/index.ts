@@ -1,3 +1,4 @@
+import * as Sentry from "@sentry/bun";
 import { Hono } from "hono";
 import { logger } from "hono/logger";
 import { fishRoutes } from "./routes/fish";
@@ -19,5 +20,16 @@ app.route("/habitats", habitatRoutes);
 app.route("/predators", predatorRoutes);
 app.route("/fishes-habitats", fishHabitatRoutes);
 app.route("/fishes-predators", fishPredatorRoutes);
+
+Sentry.init({
+  dsn: "https://e0c8fa8e95379bb267f3cdff33478db4@o4508947005177856.ingest.us.sentry.io/4508947007340544",
+  tracesSampleRate: 1.0, // Capture 100% of the transactions
+});
+
+try {
+  throw new Error("Sentry Bun test");
+} catch (e) {
+  Sentry.captureException(e);
+}
 
 export default app;
