@@ -73,3 +73,95 @@ DELETE FROM fishes_predators;
 DELETE FROM fishes;
 DELETE FROM habitats;
 DELETE FROM predators;
+<<<<<<< HEAD
+=======
+
+EXPLAIN ANALYZE SELECT
+	f.id,
+	f.name,
+	f.scientific_name,
+	f.size,
+	f.diet,
+	f.lifespan,
+	f.status,
+	f.color,
+	f.water_type,
+	f.reproduction,
+	f.behavior,
+COALESCE(
+    JSON_AGG(
+        JSON_BUILD_OBJECT(
+            'id', h.id,
+            'name', h.name
+        )
+    ) FILTER (WHERE h.id IS NOT NULL),
+    '[]'
+) AS habitats,
+COALESCE(
+    JSON_AGG(
+        JSON_BUILD_OBJECT(
+            'id', p.id,
+            'name', p.name
+        )
+    ) FILTER (WHERE p.id IS NOT NULL),
+    '[]'
+) AS predators
+FROM
+    fishes f
+LEFT JOIN
+    fishes_habitats fh ON f.id = fh.fish_id
+LEFT JOIN
+    habitats h ON fh.habitat_id = h.id
+LEFT JOIN
+    fishes_predators fp ON f.id = fp.fish_id
+LEFT JOIN
+    predators p ON fp.predator_id = p.id
+GROUP BY
+    f.id;
+
+SELECT
+    f.id,
+    f.name,
+    f.scientific_name,
+    f.size,
+    f.diet,
+    f.lifespan,
+    f.status,
+    f.color,
+    f.water_type,
+    f.reproduction,
+    f.behavior,
+COALESCE(
+    (
+        SELECT JSON_AGG(
+            JSON_BUILD_OBJECT(
+                'id', h.id,
+                'name', h.name
+            )
+        )
+        FROM fishes_habitats fh
+        JOIN habitats h ON fh.habitat_id = h.id
+        WHERE fh.fish_id = f.id
+    ),
+    '[]'
+) AS habitats,
+COALESCE(
+    (
+        SELECT JSON_AGG(
+            JSON_BUILD_OBJECT(
+                'id', p.id,
+                'name', p.name
+            )
+        )
+        FROM fishes_predators fp
+        JOIN predators p ON fp.predator_id = p.id
+        WHERE fp.fish_id = f.id
+    ),
+    '[]'
+    ) AS predators
+FROM
+    fishes f;
+
+
+
+>>>>>>> 378187a (feat: fix relation query)

@@ -8,9 +8,61 @@ export const fishRoutes = new Hono();
 
 fishRoutes.get("/", async (c) => {
   const client = await pool.connect();
+  const pageNumber = Number(c.req.queries("pageNumber"));
+  const limit = Number(c.req.query("limit"));
+  let offset = (pageNumber - 1) * limit;
 
   try {
-    const result = await client.query(`SELECT * FROM fishes;`);
+    const result = await client.query(
+      `SELECT
+            f.id,
+            f.name,
+            f.scientific_name,
+            f.size,
+            f.diet,
+            f.lifespan,
+            f.status,
+            f.color,
+            f.water_type,
+            f.reproduction,
+            f.behavior,
+        COALESCE(
+            (
+                SELECT JSON_AGG(
+                    JSON_BUILD_OBJECT(
+                        'id', h.id,
+                        'name', h.name
+                    )
+                )
+                FROM fishes_habitats fh
+                JOIN habitats h ON fh.habitat_id = h.id
+                WHERE fh.fish_id = f.id
+            ),
+            '[]'
+        ) AS habitats,
+        COALESCE(
+            (
+                SELECT JSON_AGG(
+                    JSON_BUILD_OBJECT(
+                        'id', p.id,
+                        'name', p.name
+                    )
+                )
+                FROM fishes_predators fp
+                JOIN predators p ON fp.predator_id = p.id
+                WHERE fp.fish_id = f.id
+            ),
+            '[]'
+            ) AS predators
+        FROM
+            fishes f
+        ORDER BY f.id
+        LIMIT
+            $1
+        OFFSET
+            $2;`,
+      [limit, offset],
+    );
 
     return c.json({ count: result.rowCount, data: result.rows });
   } catch (error) {

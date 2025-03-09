@@ -5,7 +5,7 @@ import { generateFakeHabitat } from "./habitat-fake";
 import { generateFakePredator } from "./predator-fake";
 
 // generateFakeFish(10);
-generateFakePredator(100);
+generateFakePredator(20);
 generateFakeHabitat();
-generateFakeFishHabitat(100);
-generateFakeFishPredator(100);
+generateFakeFishHabitat(20);
+generateFakeFishPredator(20);
