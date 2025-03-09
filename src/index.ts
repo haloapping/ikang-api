@@ -23,7 +23,8 @@ app.route("/fishes-predators", fishPredatorRoutes);
 
 Sentry.init({
   dsn: "https://e0c8fa8e95379bb267f3cdff33478db4@o4508947005177856.ingest.us.sentry.io/4508947007340544",
-  tracesSampleRate: 1.0, // Capture 100% of the transactions
+  tracesSampleRate: 1.0,
+  environment: "production",
 });
 
 try {
