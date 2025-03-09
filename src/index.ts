@@ -22,6 +22,11 @@ Sentry.init({
   dsn: "https://70a0b5be60e383ef1b5812ca265880b7@o4508947005177856.ingest.us.sentry.io/4508947534381056",
 });
 
+app.onError((error, c) => {
+  Sentry.captureException(error);
+  return c.text(error.message, 500);
+});
+
 try {
   throw new Error("Halo-halo 🐟️");
 } catch (e) {
