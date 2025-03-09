@@ -13,6 +13,9 @@
     "db:studio": "prisma studio",
     "db:reset": "prisma migrate reset --force"
   },
+  "prisma": {
+    "seed": "ts-node prisma/seed.ts"
+  },
   "dependencies": {
     "@hono/zod-validator": "^0.4.3",
     "@prisma/client": "^6.4.1",
@@ -26,8 +29,10 @@
   "devDependencies": {
     "@faker-js/faker": "^9.5.0",
     "@types/bun": "latest",
+    "@types/node": "^22.13.10",
     "@types/pg": "^8.11.11",
     "prettier": "^3.5.1",
-    "ts-node": "^10.9.2"
+    "ts-node": "^10.9.2",
+    "typescript": "^5.8.2"
   }
 }
