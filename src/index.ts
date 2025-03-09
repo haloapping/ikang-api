@@ -19,9 +19,7 @@ app.route("/habitats", habitatRoutes);
 app.route("/predators", predatorRoutes);
 
 Sentry.init({
-  dsn: "https://e0c8fa8e95379bb267f3cdff33478db4@o4508947005177856.ingest.us.sentry.io/4508947007340544",
-  tracesSampleRate: 1.0,
-  environment: "production",
+  dsn: "https://70a0b5be60e383ef1b5812ca265880b7@o4508947005177856.ingest.us.sentry.io/4508947534381056",
 });
 
 try {
