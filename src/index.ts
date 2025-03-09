@@ -23,7 +23,7 @@ Sentry.init({
 });
 
 try {
-  throw new Error("Sentry Bun test");
+  throw new Error("Halo-halo 🐟️");
 } catch (e) {
   Sentry.captureException(e);
 }
