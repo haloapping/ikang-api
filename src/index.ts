@@ -20,4 +20,13 @@ app.route("/predators", predatorRoutes);
 app.route("/fishes-habitats", fishHabitatRoutes);
 app.route("/fishes-predators", fishPredatorRoutes);
 
+app.onError((error, c) => {
+  console.error(`${error}`);
+
+  // TODO: Send error to Sentry
+  // Sentry.captureException(error);
+
+  return c.json({ message: "Internal Server Error", error }, 500);
+});
+
 export default app;

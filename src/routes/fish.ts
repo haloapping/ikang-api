@@ -7,16 +7,16 @@ export const fishRoutes = new Hono();
 
 fishRoutes.get("/", async (c) => {
   try {
-    const result = await prisma.fish.findMany({
+    const resultFishes = await prisma.fish.findMany({
       include: {
         habitats: true,
         predators: true,
       },
     });
 
-    return c.json({ count: result.length, data: result });
+    return c.json({ count: resultFishes.length, data: resultFishes });
   } catch (error) {
-    return c.json({ error: error }, 400);
+    return c.json({ error }, 400);
   }
 });
 
