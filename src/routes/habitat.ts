@@ -45,7 +45,7 @@ habitatRoutes.post("/", zValidator("json", HabitatSchema), async (c) => {
       },
     });
 
-    return c.json({ message: "Predator added", data: result }, 201);
+    return c.json({ message: "Habitat added", data: result }, 201);
   } catch (error) {
     return c.json({ error: error }, 400);
   }
@@ -55,21 +55,25 @@ habitatRoutes.patch("/:id", zValidator("json", HabitatSchema), async (c) => {
   try {
     const id = c.req.param("id");
     const habitatJSON: Habitat = await c.req.json();
-    prisma.habitat.update({
+    const result = await prisma.habitat.update({
       where: {
         id: id,
       },
       data: {
+        slug: slugify(habitatJSON.name),
         name: habitatJSON.name,
       },
     });
-  } catch (error) {}
+
+    return c.json({ message: "Habitat updated", data: result }, 201);
+  } catch (error) {
+    return c.json({ error: error }, 400);
+  }
 });
 
 habitatRoutes.delete("/:id", async (c) => {
-  const id = c.req.param("id");
-
   try {
+    const id = c.req.param("id");
     const result = await prisma.habitat.delete({
       where: {
         id: id,

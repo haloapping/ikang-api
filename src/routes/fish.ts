@@ -24,7 +24,6 @@ fishRoutes.get("/", async (c) => {
 fishRoutes.get("/search", async (c) => {
   try {
     const keyword = c.req.query("q")?.toLowerCase() || "";
-    console.log(keyword);
 
     const result = await prisma.fish.findMany({
       where: {
