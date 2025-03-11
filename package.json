@@ -10,7 +10,7 @@
     "db:migrate:deploy": "prisma migrate deploy",
     "db:gen": "prisma generate --no-hints",
     "db:studio": "prisma studio",
-    "db:reset": "prisma migrate reset --force --skip-seed"
+    "db:reset": "prisma migrate reset --force"
   },
   "prisma": {
     "seed": "ts-node prisma/seed.ts"
