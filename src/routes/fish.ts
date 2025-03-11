@@ -2,6 +2,7 @@ import { zValidator } from "@hono/zod-validator";
 import { Hono } from "hono";
 import { prisma } from "../../prisma/prisma";
 import { type Fish, FishSchema } from "../types/fish";
+import { slugify } from "../utils";
 
 export const fishRoutes = new Hono();
 
@@ -110,7 +111,7 @@ fishRoutes.post("/", zValidator("json", FishSchema), async (c) => {
     const fishJSON: Fish = await c.req.json();
     const result = await prisma.fish.create({
       data: {
-        slug: fishJSON.slug,
+        slug: slugify(fishJSON.name),
         name: fishJSON.name,
         scientificName: fishJSON.scientificName,
         size: fishJSON.size,

@@ -2,6 +2,7 @@ import { zValidator } from "@hono/zod-validator";
 import { Hono } from "hono";
 import { prisma } from "../../prisma/prisma";
 import { type Habitat, HabitatSchema } from "../types/habitat";
+import { slugify } from "../utils";
 
 export const habitatRoutes = new Hono();
 
@@ -39,7 +40,7 @@ habitatRoutes.post("/", zValidator("json", HabitatSchema), async (c) => {
     const habitatJSON: Habitat = await c.req.json();
     const result = await prisma.habitat.create({
       data: {
-        slug: habitatJSON.slug,
+        slug: slugify(habitatJSON.name),
         name: habitatJSON.name,
       },
     });
