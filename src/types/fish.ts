@@ -2,7 +2,7 @@ import { z } from "zod";
 
 const FishSchema = z.object({
   id: z.string().min(1).optional(),
-  slug: z.string().min(1),
+  slug: z.string().min(1).optional(),
   name: z.string().min(1),
   scientificName: z.string().min(1).optional(),
   habitat: z.string().min(1).optional(),
