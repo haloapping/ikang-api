@@ -23,8 +23,8 @@ model Fish {
   behavior       String?
   createdAt      DateTime   @default(now())
   updatedAt      DateTime?  @updatedAt
-  habitats       Habitat[]
-  predators      Predator[]
+  habitats       Habitat[]  @relation("FishHabitatRelation")
+  predators      Predator[] @relation("FishPredatorRelation")
 }
 
 model Habitat {
@@ -33,7 +33,7 @@ model Habitat {
   name      String    @unique
   createdAt DateTime  @default(now())
   updatedAt DateTime? @updatedAt
-  fishes    Fish[]
+  fishes    Fish[]    @relation("FishHabitatRelation")
 }
 
 model Predator {
@@ -42,5 +42,5 @@ model Predator {
   name      String    @unique
   createdAt DateTime  @default(now())
   updatedAt DateTime? @updatedAt
-  fishes    Fish[]
+  fishes    Fish[]    @relation("FishPredatorRelation")
 }
