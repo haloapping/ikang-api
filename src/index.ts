@@ -5,6 +5,9 @@ import { fishRoutes } from "./routes/fish";
 
 import { habitatRoutes } from "./routes/habitat";
 import { predatorRoutes } from "./routes/predator";
+import { PrismaClientKnownRequestError } from "@prisma/client/runtime/library";
+import { ZodError } from "zod";
+import { HTTPException } from "hono/http-exception";
 
 const app = new Hono();
 
@@ -23,6 +26,19 @@ Sentry.init({
 });
 
 app.onError((error, c) => {
+  // Error from Hono
+  if (error instanceof HTTPException) {
+    return c.json({ kind: "hono", error: error }, 400);
+  }
+  // Error from Zod
+  if (error instanceof ZodError) {
+    return c.json({ kind: "zod", error: error }, 400);
+  }
+  // Error from Prisma
+  if (error instanceof PrismaClientKnownRequestError) {
+    return c.json({ kind: "prisma", error: error }, 400);
+  }
+
   Sentry.captureException(error);
   return c.text(error.message, 500);
 });
