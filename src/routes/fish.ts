@@ -138,7 +138,10 @@ fishRoutes.patch("/:id", zValidator("json", FishSchema), async (c) => {
       where: {
         id: id,
       },
-      data: fishJSON,
+      data: {
+        slug: slugify(fishJSON.name),
+        name: fishJSON.name,
+      },
     });
 
     if (!result) {
